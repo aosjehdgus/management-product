@@ -1,17 +1,33 @@
 import React, {Component} from 'react';
-import logo from './logo.svg';
+import Customer from './components/Customer';
 import './App.css';
+
+const customer = {
+
+  'id'       : '1',
+  'image'    : 'https://placeimg.com/64/64/any',
+  'name'     : '동글',
+  'birthday' : '930121',
+  'gender'   : '남자',
+  'job'      : '개발자'
+
+}
+
 
 class App extends Component{
   render(){
 
     return(
 
-      <div className="gray-background">
-        <img src = {logo} alt = "logo" />
-        <h2>Let's develope management system!</h2>
-
-      </div>
+      <Customer 
+        id        = {customer.id}
+        image     = {customer.image}
+        name      = {customer.name}
+        birthday  = {customer.birthday}
+        gender    = {customer.gender}
+        job       = {customer.job}
+            
+      />
 
     );
 
