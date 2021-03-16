@@ -8,6 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { withStyles} from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
 
@@ -19,8 +20,10 @@ const styles = theme => ({
 
     table : {
       minWidth : 1080
+    },
+    progress : {
+      margin : theme.spacing.unit * 2
     }
-
 })
 
 //customers를 배열 형태로 만든다(여러명의 고객을 추가하기 위해서)
@@ -28,14 +31,17 @@ const styles = theme => ({
 class App extends Component{
 
   state = {
-    customers : ""
+    customers : "",
+    completed : 0
 
   }
-
+// 0-100으로 차는 게이지 같은 개념이기 때문에 0이란 값을 정해준다. 
   componentDidMount(){
+  // 0.02초 마다 progress 함수가 실행 될 수 있도록 설정 
+    this.timer = setInterval(this.progress, 20);
     this.callApi()
       .then(res => this.setState({customers : res}))
-
+      .catch(err => console.log(err));
   }
 
   callApi = async () => {
@@ -43,6 +49,12 @@ class App extends Component{
     const body = await response.json();
     return body;
   }
+
+  progress = () => {
+    const { completed } = this.state;
+    this.setState({ completed : completed >= 100 ? 0 : completed + 1 });
+  }
+  // completed가 100이 되는 순간 0으로 줄어들 수 있도록하고, 그렇지 않으면 계속해서 1씩 증가할 수 있도록 설정한다
 
   render(){
 
@@ -76,8 +88,15 @@ class App extends Component{
                     />
                   );            
                 })
-               
-               : ""}
+              // 위의 값을 불러오지 못하는 상태일 때(로딩중 일 때 아래의 값을 반환한다)
+               : 
+                <TableRow>
+                  <TableCell colSpan = "6" align = "center">
+                      <CircularProgress 
+                        className = { classes.progress } varient = "determinate" value = {this.state.completed}/>
+                  </TableCell>
+                </TableRow>
+                }
             </TableBody>
          </Table>
 
