@@ -27,6 +27,9 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
+const multer = require('multer');
+const upload = multer({dest : './upload'}) // 
+
 // customers api 만들기
 // 사용자가 customers 경로에 접속을 한 경우
 // DB에 접근해서 query를 날릴 수 있도록 코딩
@@ -39,5 +42,22 @@ app.get('/api/customers', (req, res) => {
         }
     )
 });
+
+app.use('/image', express.static('./upload'));
+
+app.post('/api/customers', upload.single('image'), (req, res) => {
+    let sql = 'INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?)';
+    let image = '/image/' + req.file.filename;
+    let name = req.body.name;
+    let birthday = req.body.birthday;
+    let gender = req.body.gender;
+    let job = req.body.job;
+    let params = [image, name, birthday, gender, job];
+    connection.query(sql, params,
+        (err, rows, fields) => {
+            res.send(rows);
+        }
+    );
+})
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
