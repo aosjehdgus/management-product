@@ -31,11 +31,29 @@ const styles = theme => ({
 
 class App extends Component{
 
-  state = {
-    customers : "",
-    completed : 0
+
+  constructor(props){
+    super(props);
+    this.state = {
+      customers : '',
+      completed : 0
+    }
+    this.stateRefresh = this.stateRefresh.bind(this);
+  }
+
+  stateRefresh = () => {
+    this.setState({
+      customers : '',
+      completed : 0
+
+    });
+
+    this.callApi()
+      .then(res => this.setState({customers : res}))
+      .catch(err => console.log(err));
 
   }
+
 // 0-100으로 차는 게이지 같은 개념이기 때문에 0이란 값을 정해준다. 
   componentDidMount(){
   // 0.02초 마다 progress 함수가 실행 될 수 있도록 설정 
@@ -103,7 +121,7 @@ class App extends Component{
          </Table>
 
         </Paper>
-        <CustomerAdd/>
+        <CustomerAdd stateRefresh = {this.stateRefresh}/>
       </div>
     );
   }

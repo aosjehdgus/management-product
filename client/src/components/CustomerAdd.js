@@ -36,6 +36,7 @@ class CustomerAdd extends React.Component{
         this.addCustomer()
             .then((response) => {
                 console.log(response.data);
+                this.props.stateRefresh();
             })
         this.setState({
             file : null,
@@ -45,7 +46,7 @@ class CustomerAdd extends React.Component{
             job : "",
             fileName : ""
         }) // 테스트를 위해서 모든 정보를 reload한다.
-        window.location.reload(); // 간단한 테스트를 위해서 페이지를 새로고침 해서 고객 데이터를 받아올 수 있도록 한다.
+       
     }
 
     handleFileChange = (e) => {
