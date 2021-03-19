@@ -102,7 +102,8 @@ class App extends Component{
     super(props);
     this.state = {
       customers : '',
-      completed : 0
+      completed : 0,
+      searchKeyword : ''
     }
     this.stateRefresh = this.stateRefresh.bind(this);
   }
@@ -110,7 +111,8 @@ class App extends Component{
   stateRefresh = () => {
     this.setState({
       customers : '',
-      completed : 0
+      completed : 0,
+      searchKeyword : ''
 
     });
 
@@ -140,9 +142,22 @@ class App extends Component{
     this.setState({ completed : completed >= 100 ? 0 : completed + 1 });
   }
   // completed가 100이 되는 순간 0으로 줄어들 수 있도록하고, 그렇지 않으면 계속해서 1씩 증가할 수 있도록 설정한다
+  handleValueChange = (e) => {
+    let nextState = {};
+    nextState[e.target.name] = e.target.value;
+    this.setState(nextState);
+  }
 
   render(){
 
+    const filteredComponents = (data) =>{
+      data = data.filter((c) => {
+        return c.name.indexOf(this.state.searchKeyword) > -1;
+      });
+      return data.map((c) => {
+        return <Customer stateRefresh={this.stateRefresh} key={c.id} id={c.id} image={c.image} name={c.name} birthdy={c.birthday} gender={c.gender} job={c.job} />
+      })
+    }
     const { classes } = this.props;
     const cellList = ["번호","프로필 이미지","이름","생년월일","성별","직업","설정"];
     return(
@@ -170,6 +185,9 @@ class App extends Component{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
+              name = "searchKeyword"
+              value = {this.state.searchKeyword}
+              onChange = {this.handleValueChange}
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
@@ -189,19 +207,9 @@ class App extends Component{
             </TableHead>
             <TableBody>
               {
-                this.state.customers ? this.state.customers.map(c => {
-                  return(
-                    <Customer stateRefresh={this.stateRefresh}
-                      key      = {c.id} 
-                      id       = {c.id}
-                      image    = {c.image}
-                      name     = {c.name}
-                      birthday = {c.birthday}
-                      gender   = {c.gender}
-                      job      = {c.job}
-                    />
-                  );            
-                })
+                this.state.customers ? 
+                  filteredComponents(this.state.customers)
+        
               // 위의 값을 불러오지 못하는 상태일 때(로딩중 일 때 아래의 값을 반환한다)
                : 
                 <TableRow>
